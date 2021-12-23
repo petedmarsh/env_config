@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+  "env_config",
   "env_config_derive"
 ]
 
