@@ -65,6 +65,22 @@ mod tests {
         }
 
         #[test]
+        fn when_env_var_name_is_osstring() {
+            temp_env::with_var(ENV_VAR, Some("false"), || {
+                let env_var_name_string: OsString = ENV_VAR.into();
+                assert_eq!(<bool as FromEnvVar>::from_env_var(env_var_name_string).unwrap(), Some(false));
+            });
+        }
+
+        #[test]
+        fn when_env_var_name_is_borrowed_osstring() {
+            temp_env::with_var(ENV_VAR, Some("false"), || {
+                let env_var_name_string: OsString = ENV_VAR.into();
+                assert_eq!(<bool as FromEnvVar>::from_env_var(&env_var_name_string).unwrap(), Some(false));
+            });
+        }
+
+        #[test]
         fn when_env_var_is_valid_unicode_but_not_parsable() {
             let invalid = "this is not a bool";
             temp_env::with_var(ENV_VAR, Some(invalid), || {
