@@ -1,6 +1,6 @@
 use std::convert::AsRef;
 use std::env;
-use std::ffi::OsString;
+use std::ffi::{OsStr, OsString};
 use std::str::FromStr;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -12,8 +12,8 @@ pub enum ConfigEnvError {
 type Result<T> = std::result::Result<T, ConfigEnvError>;
 
 trait FromEnvVar: FromStr {
-    fn from_env_var<S: Copy + Into<OsString>>(env_var_name: S) -> Result<Option<Self>> {
-        match env::var(env_var_name.into()) {
+    fn from_env_var<S: AsRef<OsStr> + Into<OsString>>(env_var_name: S) -> Result<Option<Self>> {
+        match env::var(&env_var_name) {
             Ok(env_var_value) => {
                 match FromStr::from_str(&env_var_value) {
                     Ok(parsed_value) => Ok(Some(parsed_value)),
