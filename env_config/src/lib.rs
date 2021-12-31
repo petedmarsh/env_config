@@ -3,6 +3,8 @@ use std::env;
 use std::ffi::{OsStr, OsString};
 use std::str::FromStr;
 
+pub use env_config_derive::*;
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum ConfigEnvError {
     NotUnicode{ env_var_name: OsString, env_var_raw_value: OsString },
