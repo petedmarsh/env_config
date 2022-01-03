@@ -17,7 +17,7 @@ pub trait FromEnv {
     fn from_env() -> Result<Self> where Self: Sized;
 }
 
-trait FromEnvVar: FromStr {
+pub trait FromEnvVar: FromStr {
     fn from_env_var<S: AsRef<OsStr> + Into<OsString>>(env_var_name: S) -> Result<Option<Self>> {
         match env::var(&env_var_name) {
             Ok(env_var_value) => {
