@@ -13,7 +13,7 @@ pub enum ConfigEnvError {
 
 type Result<T> = std::result::Result<T, ConfigEnvError>;
 
-trait FromEnv {
+pub trait FromEnv {
     fn from_env() -> Result<Self> where Self: Sized;
 }
 
