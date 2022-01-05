@@ -6,30 +6,28 @@ use std::str::FromStr;
 pub use env_config_derive::*;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum ConfigEnvError {
+pub enum EnvVarError {
     NotUnicode{ env_var_name: OsString, env_var_raw_value: OsString },
     NotParsable{ env_var_name: OsString, env_var_value: String },
 }
 
-type Result<T> = std::result::Result<T, ConfigEnvError>;
-
 pub trait FromEnv {
-    fn from_env() -> Result<Self> where Self: Sized;
+    fn from_env() -> Result<Self, EnvVarError> where Self: Sized;
 }
 
 pub trait FromEnvVar: FromStr {
-    fn from_env_var<S: AsRef<OsStr> + Into<OsString>>(env_var_name: S) -> Result<Option<Self>> {
+    fn from_env_var<S: AsRef<OsStr> + Into<OsString>>(env_var_name: S) -> Result<Option<Self>, EnvVarError> {
         match env::var(&env_var_name) {
             Ok(env_var_value) => {
                 match FromStr::from_str(&env_var_value) {
                     Ok(parsed_value) => Ok(Some(parsed_value)),
-                    Err(_) => Err(ConfigEnvError::NotParsable{ env_var_name: env_var_name.into(), env_var_value }),
+                    Err(_) => Err(EnvVarError::NotParsable{ env_var_name: env_var_name.into(), env_var_value }),
                 }
             },
             Err(e) => {
                 match e {
                     env::VarError::NotPresent => Ok(None),
-                    env::VarError::NotUnicode(env_var_raw_value) => Err(ConfigEnvError::NotUnicode{env_var_name: env_var_name.into(), env_var_raw_value }),
+                    env::VarError::NotUnicode(env_var_raw_value) => Err(EnvVarError::NotUnicode{env_var_name: env_var_name.into(), env_var_raw_value }),
                 }
             }
         }
@@ -86,7 +84,7 @@ mod tests {
         fn when_env_var_is_valid_unicode_but_not_parsable() {
             let invalid = "this is not a bool";
             temp_env::with_var(ENV_VAR, Some(invalid), || {
-                let_assert!(Err(ConfigEnvError::NotParsable{ env_var_name, env_var_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
+                let_assert!(Err(EnvVarError::NotParsable{ env_var_name, env_var_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
                 check!(env_var_name == ENV_VAR);
                 check!(env_var_value == invalid);
             });
@@ -99,7 +97,7 @@ mod tests {
             // in a UTF-8 sequence.
             let os_str = OsStr::from_bytes(&[0x66, 0x6f, 0x80, 0x6f]);
             temp_env::with_var(ENV_VAR, Some(os_str.clone()), || {
-                let_assert!(Err(ConfigEnvError::NotUnicode{ env_var_name, env_var_raw_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
+                let_assert!(Err(EnvVarError::NotUnicode{ env_var_name, env_var_raw_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
                 check!(env_var_name == ENV_VAR);
                 check!(env_var_raw_value == os_str);
             });
@@ -127,7 +125,7 @@ mod tests {
             fn when_env_var_is_improperly_cased_true() {
                 let improperly_cased_true = "tRuE";
                 temp_env::with_var(ENV_VAR, Some(improperly_cased_true.clone()), || {
-                    let_assert!(Err(ConfigEnvError::NotParsable{ env_var_name, env_var_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
+                    let_assert!(Err(EnvVarError::NotParsable{ env_var_name, env_var_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
                     check!(env_var_name == ENV_VAR);
                     check!(env_var_value == improperly_cased_true);
                 });
@@ -137,7 +135,7 @@ mod tests {
             fn when_env_var_is_improperly_cased_false() {
                 let improperly_cased_false = "fAlSe";
                 temp_env::with_var(ENV_VAR, Some(improperly_cased_false.clone()), || {
-                    let_assert!(Err(ConfigEnvError::NotParsable{ env_var_name, env_var_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
+                    let_assert!(Err(EnvVarError::NotParsable{ env_var_name, env_var_value }) = <bool as FromEnvVar>::from_env_var(ENV_VAR));
                     check!(env_var_name == ENV_VAR);
                     check!(env_var_value == improperly_cased_false);
                 });
