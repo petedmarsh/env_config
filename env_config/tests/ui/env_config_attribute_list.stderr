@@ -1,0 +1,5 @@
+error: attribute only supports these named args: prefix
+ --> tests/ui/env_config_attribute_list.rs:3:14
+  |
+3 | #[env_config(A, B, C)]
+  |              ^

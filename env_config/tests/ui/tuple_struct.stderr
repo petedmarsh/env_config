@@ -1,0 +1,5 @@
+error: cannot be derived for tuple structs
+ --> tests/ui/tuple_struct.rs:4:27
+  |
+4 | struct MyLovelyTupleStruct(bool, bool, bool);
+  |                           ^^^^^^^^^^^^^^^^^^

@@ -1,0 +1,5 @@
+error: attribute only supports these named args: prefix
+ --> tests/ui/env_config_attribute_word.rs:3:14
+  |
+3 | #[env_config(MY_LOVELY_PREFIX)]
+  |              ^^^^^^^^^^^^^^^^

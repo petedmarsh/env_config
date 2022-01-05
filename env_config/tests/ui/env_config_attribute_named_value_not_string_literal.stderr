@@ -1,0 +1,5 @@
+error: attribute arg prefix only accepts a literal string value
+ --> tests/ui/env_config_attribute_named_value_not_string_literal.rs:3:23
+  |
+3 | #[env_config(prefix = 123)]
+  |                       ^^^

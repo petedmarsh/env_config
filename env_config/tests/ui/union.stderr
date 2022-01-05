@@ -1,0 +1,5 @@
+error: cannot be derived for unions
+ --> tests/ui/union.rs:4:7
+  |
+4 | union MyLovelyUnion {
+  |       ^^^^^^^^^^^^^

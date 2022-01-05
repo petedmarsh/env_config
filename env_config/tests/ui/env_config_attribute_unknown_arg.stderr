@@ -1,0 +1,5 @@
+error: unknown attribute arg, valid args are: prefix
+ --> tests/ui/env_config_attribute_unknown_arg.rs:3:14
+  |
+3 | #[env_config(some_unknown_arg = "WHOOPS")]
+  |              ^^^^^^^^^^^^^^^^
