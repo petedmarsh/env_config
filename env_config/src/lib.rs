@@ -11,8 +11,14 @@ pub enum EnvVarError {
     NotParsable{ env_var_name: OsString, env_var_value: String },
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub enum EnvError {
+    InvalidValue(EnvVarError),
+    MandatoryEnvVarNotSet{ env_var_name: OsString },
+}
+
 pub trait FromEnv {
-    fn from_env() -> Result<Self, EnvVarError> where Self: Sized;
+    fn from_env() -> Result<Self, EnvError> where Self: Sized;
 }
 
 pub trait FromEnvVar: FromStr {
