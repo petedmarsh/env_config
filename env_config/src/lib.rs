@@ -41,6 +41,8 @@ pub trait FromEnvVar: FromStr {
 } 
 
 impl FromEnvVar for bool {}
+impl FromEnvVar for String {}
+
 
 #[cfg(test)]
 mod tests {
@@ -146,6 +148,14 @@ mod tests {
                     check!(env_var_value == improperly_cased_false);
                 });
             }
+        }
+
+        #[test]
+        fn for_string() {
+            let value = "this is some string env var value".to_string();
+            temp_env::with_var(ENV_VAR, Some(value.clone()), || {
+                assert_eq!(<String as FromEnvVar>::from_env_var(ENV_VAR).unwrap(), Some(value.clone()));
+            });
         }
     }
 }
